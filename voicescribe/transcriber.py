@@ -30,8 +30,8 @@ class WhisperTranscriber:
     def __init__(self, model_size: str, language: str) -> None:
         if model_size not in VALID_WHISPER_MODELS:
             raise ValueError(
-                f"Gecersiz whisper model boyutu: '{model_size}'. "
-                f"Gecerli degerler: {', '.join(VALID_WHISPER_MODELS)}"
+                f"Invalid Whisper model size: '{model_size}'. "
+                f"Valid values: {', '.join(VALID_WHISPER_MODELS)}"
             )
         self._model_size = model_size
         self._language = language

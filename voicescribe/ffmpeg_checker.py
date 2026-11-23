@@ -15,6 +15,6 @@ class FFmpegChecker:
         """ffmpeg PATH icinde bulunamazsa anlasilir bir hata firlatir."""
         if shutil.which("ffmpeg") is None:
             raise FFmpegNotFoundError(
-                "ffmpeg bulunamadi. Whisper ses dosyalarini isleyebilmek icin ffmpeg gerektirir. "
-                "Kurulum talimatlari icin README.md dosyasindaki 'Kurulum' bolumune bakin."
+                "ffmpeg not found. Whisper needs ffmpeg to read audio files. "
+                "See the 'Installation' section of README.md."
             )

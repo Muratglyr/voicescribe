@@ -10,8 +10,8 @@ VALID_WHISPER_MODELS: tuple[str, ...] = ("tiny", "base", "small", "medium", "lar
 
 DEFAULT_WHISPER_MODEL = "medium"
 DEFAULT_LANGUAGE = "en"
-DEFAULT_OUTPUT_DIR = Path("./ciktilar")
-EDITED_FILE_SUFFIX = "_duzenlenmis"
+DEFAULT_OUTPUT_DIR = Path("./transcripts")
+EDITED_FILE_SUFFIX = "_edited"
 
 # LLM'e tek seferde gonderilecek metin parcasinin yaklasik ust siniri (karakter).
 LLM_CHUNK_MAX_CHARS = 12000

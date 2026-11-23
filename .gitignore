@@ -235,3 +235,6 @@ __marimo__/
 # Personal documents (CVs, PDFs)
 *.pdf
 *.docx
+
+# Default output folder
+transcripts/

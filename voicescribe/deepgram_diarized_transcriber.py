@@ -2,7 +2,7 @@
 etiketleriyle birlikte metne cevirir.
 
 Yerel pyannote.audio pipeline'inin yerini alir: transkripsiyon ve konusmaci
-ayrimi ayni bulut istegiyle yapildigi icin, --konusmaci-ayir kullanildiginda
+ayrimi ayni bulut istegiyle yapildigi icin, --diarize kullanildiginda
 yerel Whisper adimina gerek kalmaz. Bu adimda ses dosyasi Deepgram'a
 gonderilir (bkz. README "Veri Gizliligi").
 """
@@ -15,12 +15,12 @@ from typing import Any
 from .provider_settings import DeepgramSettings
 
 DEEPGRAM_LISTEN_URL = "https://api.deepgram.com/v1/listen"
-UNKNOWN_SPEAKER_LABEL = "BILINMEYEN_KONUSMACI"
+UNKNOWN_SPEAKER_LABEL = "UNKNOWN_SPEAKER"
 
 
 class DeepgramDiarizedTranscriber:
     """Deepgram'in /v1/listen ucuna ses dosyasi gonderip, donen konusmaci
-    etiketli 'utterance'lari 'KONUSMACI_00: ...' formatinda birlestirir.
+    etiketli 'utterance'lari 'SPEAKER_00: ...' formatinda birlestirir.
     """
 
     def __init__(self, language: str, settings: DeepgramSettings | None = None) -> None:
@@ -80,4 +80,4 @@ class DeepgramDiarizedTranscriber:
 
     @staticmethod
     def _label(speaker: int | None) -> str:
-        return UNKNOWN_SPEAKER_LABEL if speaker is None else f"KONUSMACI_{speaker:02d}"
+        return UNKNOWN_SPEAKER_LABEL if speaker is None else f"SPEAKER_{speaker:02d}"

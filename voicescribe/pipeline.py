@@ -50,10 +50,10 @@ class TranscriptPipeline:
 
         created_files: list[Path] = []
         total = len(audio_files)
-        iterator = tqdm(audio_files, desc="Ses dosyalari", unit="dosya") if tqdm else audio_files
+        iterator = tqdm(audio_files, desc="Audio files", unit="file") if tqdm else audio_files
 
         for index, audio_file in enumerate(iterator, start=1):
-            print(f"[{index}/{total}] Isleniyor: {audio_file.name}")
+            print(f"[{index}/{total}] Processing: {audio_file.name}")
             created_files.extend(self._process_file(audio_file))
 
         return created_files
@@ -62,20 +62,20 @@ class TranscriptPipeline:
         """Gerekli OpenRouter ayarlari eksikse duzenleme adimini sessizce devre disi birakir."""
         if self._editor is not None and not self._editor.is_ready():
             print(
-                "UYARI: OPENROUTER_API_KEY / OPENROUTER_BASE_URL / OPENROUTER_MODEL "
-                "(veya --llm-model) eksik. --duzenle adimi atlanacak, sadece ham transkript "
-                "olusturulacak."
+                "WARNING: OPENROUTER_API_KEY / OPENROUTER_BASE_URL / OPENROUTER_MODEL "
+                "(or --llm-model) is missing. Skipping --edit; only the raw transcript "
+                "will be written."
             )
             self._editor = None
         elif self._editor is not None:
-            print(f"LLM duzenleme modeli (OpenRouter): {self._editor.model_name}")
+            print(f"LLM editing model (OpenRouter): {self._editor.model_name}")
 
     def _validate_diarizer(self) -> None:
         """Gerekli Deepgram ayarlari eksikse konusmaci ayrimi adimini sessizce devre disi birakir."""
         if self._diarized_transcriber is not None and not self._diarized_transcriber.is_ready():
             print(
-                "UYARI: DEEPGRAM_API_KEY / DEEPGRAM_MODEL eksik. --konusmaci-ayir adimi "
-                "atlanacak, transkript yerel Whisper ile ve konusmaci etiketi olmadan uretilecek."
+                "WARNING: DEEPGRAM_API_KEY / DEEPGRAM_MODEL is missing. Skipping --diarize; "
+                "transcribing locally with Whisper, without speaker labels."
             )
             self._diarized_transcriber = None
 
@@ -83,7 +83,7 @@ class TranscriptPipeline:
         results: list[Path] = []
 
         if self._diarized_transcriber is not None:
-            print("  Deepgram ile transkript + konusmaci ayrimi yapiliyor...")
+            print("  Transcribing and separating speakers with Deepgram...")
             raw_text = self._diarized_transcriber.transcribe(audio_file)
         else:
             segments = self._transcriber.transcribe(audio_file)
@@ -92,16 +92,16 @@ class TranscriptPipeline:
         raw_file_path = self._config.output_dir / f"{audio_file.stem}.txt"
         raw_file_path.write_text(raw_text, encoding="utf-8")
         results.append(raw_file_path)
-        print(f"  Ham transkript kaydedildi: {raw_file_path}")
+        print(f"  Raw transcript saved: {raw_file_path}")
 
         if self._editor is not None:
-            print("  LLM ile duzenleniyor...")
+            print("  Editing with LLM...")
             edited_text = self._editor.edit(raw_text)
             for warning in find_speaker_consistency_warnings(raw_text, edited_text):
-                print(f"  UYARI: {warning}")
+                print(f"  WARNING: {warning}")
             edited_file_path = self._config.output_dir / f"{audio_file.stem}{EDITED_FILE_SUFFIX}.txt"
             edited_file_path.write_text(edited_text, encoding="utf-8")
             results.append(edited_file_path)
-            print(f"  Duzenlenmis transkript kaydedildi: {edited_file_path}")
+            print(f"  Edited transcript saved: {edited_file_path}")
 
         return results

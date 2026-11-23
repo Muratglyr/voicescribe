@@ -6,19 +6,20 @@ Toplantı, podcast, röportaj, ders, sesli not gibi her türlü konuşma kaydın
 ses dosyalarını (`.m4a`, `.mp3`, `.wav`, `.mp4`, `.aac`, `.ogg`) alıp:
 
 1. OpenAI Whisper modeliyle **tamamen yerel olarak** (internete ses göndermeden)
-   metne çevirir (varsayılan dil İngilizce; `--dil` ile değiştirilebilir),
-2. İsteğe bağlı olarak (`--konusmaci-ayir`) ses dosyasındaki farklı konuşmacıları
+   metne çevirir (varsayılan dil İngilizce; `--language` ile değiştirilebilir),
+2. İsteğe bağlı olarak (`--diarize`) ses dosyasındaki farklı konuşmacıları
    Deepgram üzerinden (buluta gönderip) ayırt eder; bu modda transkripsiyon da
    yerel Whisper yerine doğrudan Deepgram'dan alınır,
-3. İsteğe bağlı olarak (`--duzenle`) ham transkripti OpenRouter üzerinden bir LLM
+3. İsteğe bağlı olarak (`--edit`) ham transkripti OpenRouter üzerinden bir LLM
    ile noktalanmış, paragraflanmış, okunabilir bir dökümana dönüştürür.
 
 ## Mimari
 
 Kod, her biri tek bir sorumluluğa sahip sınıflara bölünmüş, modüler bir
 yapıdadır (`voicescribe/` paketi). Modül/sınıf/fonksiyon isimleri
-İngilizce, kod içi yorumlar ve kullanıcıya gösterilen mesajlar (CLI
-bayrakları dahil) Türkçedir:
+İngilizce, kod içi yorumlar Türkçedir. CLI bayrakları ve kullanıcıya gösterilen
+mesajlar İngilizcedir; eski Türkçe bayraklar (`--klasor`, `--dil`, `--cikti`,
+`--duzenle`, `--konusmaci-ayir`) geriye dönük uyumluluk için hâlâ çalışır:
 
 | Modül | Sınıf | Sorumluluk |
 |---|---|---|
@@ -27,20 +28,20 @@ bayrakları dahil) Türkçedir:
 | `provider_settings.py` | `OpenRouterSettings`, `DeepgramSettings` | Dış servis ayarlarını **sadece** ortam değişkenlerinden okuma |
 | `file_finder.py` | `AudioFileFinder` | Girdi dosya/klasöründen desteklenen ses dosyalarını bulma |
 | `ffmpeg_checker.py` | `FFmpegChecker` | Sistemde ffmpeg kurulu mu, doğrulama |
-| `transcriber.py` | `WhisperTranscriber` | Whisper modelini yükleyip ses dosyasını zaman damgalı segmentlere çevirme (yerel, `--konusmaci-ayir` yokken) |
-| `deepgram_diarized_transcriber.py` | `DeepgramDiarizedTranscriber` | Deepgram üzerinden tek istekte transkript + konuşmacı etiketli metni alma (`--konusmaci-ayir` ile) |
+| `transcriber.py` | `WhisperTranscriber` | Whisper modelini yükleyip ses dosyasını zaman damgalı segmentlere çevirme (yerel, `--diarize` yokken) |
+| `deepgram_diarized_transcriber.py` | `DeepgramDiarizedTranscriber` | Deepgram üzerinden tek istekte transkript + konuşmacı etiketli metni alma (`--diarize` ile) |
 | `text_chunker.py` | `TextChunker` | Uzun metni LLM bağlam sınırına uygun parçalara bölme |
 | `llm_editor.py` | `LlmEditor` | Ham metni OpenRouter üzerinden bir LLM ile redakte etme |
 | `pipeline.py` | `TranscriptPipeline` | Yukarıdaki sınıfları bir araya getiren orkestratör |
 | `cli.py` | — | Argüman ayrıştırma, `.env` yükleme ve giriş noktası |
 
-**Konuşmacı ayrımı nasıl çalışır?** `--konusmaci-ayir` verildiğinde yerel
+**Konuşmacı ayrımı nasıl çalışır?** `--diarize` verildiğinde yerel
 Whisper adımı hiç çalışmaz; ses dosyası doğrudan Deepgram'ın `nova-3`
 modeline gönderilir ve tek istekte hem transkript hem de kelime/cümle
 bazında konuşmacı numarası (`speaker: 0`, `speaker: 1`, ...) döner.
 `DeepgramDiarizedTranscriber`, ardışık aynı-konuşmacılı cümleleri birleştirip
-metne `KONUSMACI_00: ...` / `KONUSMACI_01: ...` etiketlerini deterministik
-olarak ekler (LLM tahmini değil). `--konusmaci-ayir` verilmediğinde ise
+metne `SPEAKER_00: ...` / `SPEAKER_01: ...` etiketlerini deterministik
+olarak ekler (LLM tahmini değil). `--diarize` verilmediğinde ise
 transkripsiyon eskisi gibi tamamen yerel Whisper ile yapılır.
 
 **Hiçbir sağlayıcı/model adı, API anahtarı ya da servis adresi Python
@@ -93,10 +94,10 @@ sudo apt update && sudo apt install ffmpeg
 ### 3. (Opsiyonel) NVIDIA GPU ile hızlandırma
 
 `requirements.txt` varsayılan olarak PyPI'dan **CPU-only** PyTorch kurar.
-NVIDIA GPU'nuz varsa yerel Whisper adımı (yani `--konusmaci-ayir`
+NVIDIA GPU'nuz varsa yerel Whisper adımı (yani `--diarize`
 *kullanılmadığı* durumlar) için ciddi ölçüde hız kazandırır — örneğin 21
 dakikalık bir kayıt CPU'da ~11 dakika sürerken, GPU'da (RTX 5060, `small`
-modeliyle) ~2.5 dakikaya iniyor. (`--konusmaci-ayir` kullanıldığında
+modeliyle) ~2.5 dakikaya iniyor. (`--diarize` kullanıldığında
 transkripsiyon Deepgram'da bulutta yapıldığı için bu adım GPU'dan
 etkilenmez.) Kurulum:
 
@@ -118,13 +119,13 @@ python -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_
 `True` ve GPU adınızı görüyorsanız hazırsınız — kod tarafında ekstra bir
 ayar gerekmez, Whisper GPU varsa otomatik kullanır.
 
-### 4. Ortam değişkenleri (.env) — `--duzenle` ve `--konusmaci-ayir` için
+### 4. Ortam değişkenleri (.env) — `--edit` ve `--diarize` için
 
 `.env.example` dosyasını `.env` olarak kopyalayın; program başlarken bu
 dosyayı otomatik olarak yükler (`python-dotenv`). Elle `export` etmenize
 gerek yoktur.
 
-**`--duzenle` için (OpenRouter):**
+**`--edit` için (OpenRouter):**
 1. [openrouter.ai](https://openrouter.ai) üzerinden bir hesap açıp API
    anahtarı alın, `OPENROUTER_API_KEY` değerine yazın.
 2. `OPENROUTER_MODEL` değerine kullanmak istediğiniz model kimliğini yazın
@@ -134,10 +135,10 @@ gerek yoktur.
 3. `OPENROUTER_BASE_URL` zaten dolu gelir (`https://openrouter.ai/api/v1`),
    değiştirmenize gerek yok.
 
-Bu üç değerden biri eksikse program çökmez; `--duzenle` adımını atlayıp
+Bu üç değerden biri eksikse program çökmez; `--edit` adımını atlayıp
 sadece ham transkripti üretir ve terminale bir uyarı basar.
 
-**`--konusmaci-ayir` için (Deepgram):**
+**`--diarize` için (Deepgram):**
 1. [console.deepgram.com](https://console.deepgram.com/) üzerinden bir hesap
    açıp API anahtarı alın, `DEEPGRAM_API_KEY` değerine yazın.
 2. `DEEPGRAM_MODEL` zaten `nova-3` olarak dolu gelir, değiştirmenize gerek
@@ -145,41 +146,41 @@ sadece ham transkripti üretir ve terminale bir uyarı basar.
 
 Ücretlidir, kullanım bazlı faturalandırılır (bu yazı itibarıyla ~$0,0043/dk,
 20 dakikalık bir kayıt için ~$0,09). `DEEPGRAM_API_KEY` tanımlı değilse
-`--konusmaci-ayir` adımı atlanır, transkript yerel Whisper ile ve konuşmacı
+`--diarize` adımı atlanır, transkript yerel Whisper ile ve konuşmacı
 etiketi olmadan üretilir. Güncel fiyatlandırma:
 [deepgram.com/pricing](https://deepgram.com/pricing).
 
 ## Kullanım
 
 ```bash
-python transkript.py "kayit.m4a"
-python transkript.py "kayitlar_klasoru/" --klasor
-python transkript.py "kayit.m4a" --model medium
-python transkript.py "kayit.m4a" --konusmaci-ayir
-python transkript.py "kayit.m4a" --duzenle
-python transkript.py "kayit.m4a" --duzenle --llm-model openai/gpt-4o-mini
-python transkript.py "kayitlar_klasoru/" --klasor --konusmaci-ayir --duzenle --cikti ./ciktilar
+python transcribe.py "kayit.m4a"
+python transcribe.py "kayitlar_klasoru/" --folder
+python transcribe.py "kayit.m4a" --model medium
+python transcribe.py "kayit.m4a" --diarize
+python transcribe.py "kayit.m4a" --edit
+python transcribe.py "kayit.m4a" --edit --llm-model openai/gpt-4o-mini
+python transcribe.py "kayitlar_klasoru/" --folder --diarize --edit --output ./transcripts
 ```
 
 ### CLI Argümanları
 
 | Argüman | Açıklama | Varsayılan |
 |---|---|---|
-| `girdi` | Ses dosyası ya da (`--klasor` ile) klasör yolu | — (zorunlu) |
-| `--klasor` | Girdinin bir klasör olduğunu belirtir, içindeki tüm desteklenen dosyalar işlenir | kapalı |
+| `input` | Ses dosyası ya da (`--folder` ile) klasör yolu | — (zorunlu) |
+| `--folder` | Girdinin bir klasör olduğunu belirtir, içindeki tüm desteklenen dosyalar işlenir | kapalı |
 | `--model` | Whisper model boyutu: `tiny`, `base`, `small`, `medium`, `large` | `medium` |
-| `--dil` | Transkript dili | `en` |
-| `--cikti` | Çıktıların yazılacağı klasör | `./ciktilar` |
-| `--konusmaci-ayir` | Konuşmacıları Deepgram ile ayırt eder (transkripsiyon da Deepgram'dan alınır; `DEEPGRAM_API_KEY` gerekir) | kapalı |
-| `--duzenle` | Ham transkripti OpenRouter üzerinden bir LLM ile düzenler | kapalı |
-| `--llm-model` | `--duzenle` için OpenRouter model kimliği | `OPENROUTER_MODEL` ortam değişkeni |
+| `--language` | Transkript dili | `en` |
+| `--output` | Çıktıların yazılacağı klasör | `./transcripts` |
+| `--diarize` | Konuşmacıları Deepgram ile ayırt eder (transkripsiyon da Deepgram'dan alınır; `DEEPGRAM_API_KEY` gerekir) | kapalı |
+| `--edit` | Ham transkripti OpenRouter üzerinden bir LLM ile düzenler | kapalı |
+| `--llm-model` | `--edit` için OpenRouter model kimliği | `OPENROUTER_MODEL` ortam değişkeni |
 
 `--llm-model` verilmezse `.env` dosyasındaki `OPENROUTER_MODEL` kullanılır;
-ikisi de tanımlı değilse `--duzenle` adımı atlanır. Kod içinde hiçbir
+ikisi de tanımlı değilse `--edit` adımı atlanır. Kod içinde hiçbir
 model adı sabitlenmemiştir.
 
-`--konusmaci-ayir` verildiğinde transkripsiyon Deepgram'dan alındığı için
-`--model` (Whisper model boyutu) o çalıştırmada göz ardı edilir; `--dil`
+`--diarize` verildiğinde transkripsiyon Deepgram'dan alındığı için
+`--model` (Whisper model boyutu) o çalıştırmada göz ardı edilir; `--language`
 ise Deepgram'a da iletilmeye devam eder.
 
 ### Whisper Model Boyutları
@@ -194,17 +195,17 @@ ise Deepgram'a da iletilmeye devam eder.
 
 ## Veri Gizliliği
 
-Varsayılan olarak (yani `--konusmaci-ayir` **kullanılmadığında**) Whisper
+Varsayılan olarak (yani `--diarize` **kullanılmadığında**) Whisper
 transkripsiyonu **tamamen yerel** çalışır; ses dosyanız hiçbir zaman
 internete gönderilmez.
 
-`--konusmaci-ayir` kullanıldığında ise ses dosyasının tamamı, transkripsiyon
+`--diarize` kullanıldığında ise ses dosyasının tamamı, transkripsiyon
 + konuşmacı ayrımı için Deepgram'a gönderilir — bu adımda ses artık yerelde
 kalmaz. Kayıtlar gerçek kişilere ait olabileceğinden, bu bayrağı
 kullanmadan önce ilgili kişilerin kaydın bir bulut hizmetine gönderileceğinden
 haberdar olduğundan emin olun.
 
-`--duzenle` bayrağı kullanıldığında ise, o ana kadar üretilmiş **metin**
+`--edit` bayrağı kullanıldığında ise, o ana kadar üretilmiş **metin**
 transkripti (ses değil) OpenRouter üzerinden seçtiğiniz LLM sağlayıcısına
 gönderilir.
 

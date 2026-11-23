@@ -5,11 +5,11 @@ does not come from a real recording.
 
 | File | What it shows |
 |---|---|
-| `sample_podcast.txt` | Raw output with `--konusmaci-ayir` (Deepgram diarization), no punctuation |
-| `sample_podcast_duzenlenmis.txt` | The same transcript after `--duzenle` (LLM copy-editing): punctuation and paragraphs fixed, filler words trimmed, speaker turns and wording unchanged |
+| `sample_podcast.txt` | Raw output with `--diarize` (Deepgram diarization), no punctuation |
+| `sample_podcast_edited.txt` | The same transcript after `--edit` (LLM copy-editing): punctuation and paragraphs fixed, filler words trimmed, speaker turns and wording unchanged |
 
 Command that produces this pair of files:
 
 ```bash
-python transkript.py "sample_podcast.m4a" --konusmaci-ayir --duzenle
+python transcribe.py "sample_podcast.m4a" --diarize --edit
 ```

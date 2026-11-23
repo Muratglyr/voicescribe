@@ -6,7 +6,7 @@ yanlis konusmaciya atfedebiliyor (orn. bir konusmacinin cumlesi
 digerine atfedilebilir). Bu modul, her duzenlenmis turu icerik benzerligiyle
 en yakin ham tura eslestirip, o ham etiket icin "baskin" (en sik esleşen)
 duzenlenmis etiketten sapan turleri uyari olarak dondurur. Model etiketleri
-tutarli bir sekilde yeniden adlandirmissa (orn. KONUSMACI_00 -> "Konuk") bu
+tutarli bir sekilde yeniden adlandirmissa (orn. SPEAKER_00 -> "Guest") bu
 baskin-esleme yaklasimi sayesinde yanlis alarm vermez; sadece TUTARSIZ
 (bazen bir isim, bazen baska bir isim/numara) atamalari yakalar.
 """
@@ -69,8 +69,8 @@ def find_speaker_consistency_warnings(raw_text: str, edited_text: str) -> list[s
     for raw_label, edited_label, snippet in matches:
         if edited_label != dominant_edited_label[raw_label]:
             warnings.append(
-                f"Olasi konusmaci karismasi: \"{snippet}...\" ham transkriptte '{raw_label}' "
-                f"iken duzenlenmiste '{edited_label}' olarak etiketlenmis "
-                f"(bu konusma icin beklenen: '{dominant_edited_label[raw_label]}')."
+                f"Possible speaker mix-up: \"{snippet}...\" is '{raw_label}' in the raw transcript "
+                f"but labelled '{edited_label}' in the edited one "
+                f"(expected for this speaker: '{dominant_edited_label[raw_label]}')."
             )
     return warnings
