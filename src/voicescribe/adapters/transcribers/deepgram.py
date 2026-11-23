@@ -9,9 +9,9 @@ from collections.abc import Callable, Mapping
 from pathlib import Path
 from typing import Any
 
-from .._optional import import_optional
-from ..domain import Transcript, Utterance
-from ..settings import DeepgramSettings
+from voicescribe.adapters._optional import import_optional
+from voicescribe.config.settings import DeepgramSettings
+from voicescribe.core.domain import Transcript, Utterance
 
 ENGINE_NAME = "deepgram"
 _PACKAGE = "requests"

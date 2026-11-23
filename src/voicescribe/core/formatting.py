@@ -3,9 +3,20 @@
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass
 
-from .domain import Transcript, Utterance
-from .settings import FormatSettings
+from voicescribe.core.domain import Transcript, Utterance
+
+
+@dataclass(frozen=True)
+class FormatSettings:
+    speaker_label: str
+    unknown_speaker_label: str
+    speaker_separator: str
+    turn_separator: str
+    segment_separator: str
+    sentence_end_pattern: str
+    turn_pattern: str
 
 
 class TranscriptFormatter:

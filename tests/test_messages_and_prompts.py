@@ -4,9 +4,9 @@ from pathlib import Path
 
 import pytest
 
-from voicescribe.errors import ConfigurationError, InputError
-from voicescribe.messages import Messages
-from voicescribe.prompts import PromptLibrary
+from voicescribe.config.messages import Messages
+from voicescribe.config.prompts import PromptLibrary
+from voicescribe.core.errors import ConfigurationError, InputError
 
 
 def test_messages_are_formatted() -> None:

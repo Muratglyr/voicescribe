@@ -7,10 +7,10 @@ from functools import cached_property
 from pathlib import Path
 from typing import Any
 
-from .._optional import import_optional
-from ..domain import Transcript, Utterance
-from ..errors import ConfigurationError
-from ..settings import WhisperSettings
+from voicescribe.adapters._optional import import_optional
+from voicescribe.config.settings import WhisperSettings
+from voicescribe.core.domain import Transcript, Utterance
+from voicescribe.core.errors import ConfigurationError
 
 ENGINE_NAME = "whisper"
 _PACKAGE = "whisper"

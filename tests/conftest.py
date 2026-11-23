@@ -4,9 +4,9 @@ from pathlib import Path
 
 import pytest
 
-from voicescribe.formatting import TranscriptFormatter
-from voicescribe.messages import Messages
-from voicescribe.settings import Settings, SettingsLoader
+from voicescribe.config.messages import Messages
+from voicescribe.config.settings import Settings, SettingsLoader
+from voicescribe.core.formatting import TranscriptFormatter
 
 
 @pytest.fixture

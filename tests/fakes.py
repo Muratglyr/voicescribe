@@ -7,7 +7,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
 
-from voicescribe.domain import Transcript, Utterance
+from voicescribe.core.domain import Transcript, Utterance
 
 
 @dataclass

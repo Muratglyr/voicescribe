@@ -14,17 +14,18 @@ from typing import cast
 
 from tqdm import tqdm
 
-from .audio import AudioSource
-from .editors import LlmTranscriptEditor, SpeakerConsistencyInspector
-from .errors import ConfigurationError
-from .formatting import TextChunker, TranscriptFormatter
-from .messages import Messages
-from .pipeline import Progress, TranscriptionPipeline
-from .ports import Transcriber, TranscriptEditor, TranscriptWriter
-from .prompts import PromptLibrary
-from .settings import Settings
-from .transcribers import DeepgramTranscriber, WhisperTranscriber, deepgram, whisper
-from .writers import JsonWriter, SrtWriter, TextWriter, json, srt, text
+from voicescribe.adapters.audio import AudioSource
+from voicescribe.adapters.editors import LlmTranscriptEditor
+from voicescribe.adapters.transcribers import DeepgramTranscriber, WhisperTranscriber, deepgram, whisper
+from voicescribe.adapters.writers import JsonWriter, SrtWriter, TextWriter, json, srt, text
+from voicescribe.application.pipeline import Progress, TranscriptionPipeline
+from voicescribe.config.messages import Messages
+from voicescribe.config.prompts import PromptLibrary
+from voicescribe.config.settings import Settings
+from voicescribe.core.consistency import SpeakerConsistencyInspector
+from voicescribe.core.errors import ConfigurationError
+from voicescribe.core.formatting import TextChunker, TranscriptFormatter
+from voicescribe.core.ports import Transcriber, TranscriptEditor, TranscriptWriter
 
 logger = logging.getLogger(__name__)
 _LIST_JOINER = ", "

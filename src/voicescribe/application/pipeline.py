@@ -10,11 +10,11 @@ import logging
 from collections.abc import Callable, Iterable, Sequence
 from pathlib import Path
 
-from .audio import AudioSource
-from .domain import Transcript
-from .messages import Messages
-from .ports import Transcriber, TranscriptEditor, TranscriptInspector, TranscriptWriter
-from .settings import OutputSettings
+from voicescribe.adapters.audio import AudioSource
+from voicescribe.config.messages import Messages
+from voicescribe.config.settings import OutputSettings
+from voicescribe.core.domain import Transcript
+from voicescribe.core.ports import Transcriber, TranscriptEditor, TranscriptInspector, TranscriptWriter
 
 logger = logging.getLogger(__name__)
 

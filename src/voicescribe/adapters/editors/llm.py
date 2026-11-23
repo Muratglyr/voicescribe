@@ -6,10 +6,10 @@ from collections.abc import Callable
 from functools import cached_property
 from typing import Any
 
-from .._optional import import_optional
-from ..domain import Transcript
-from ..formatting import TextChunker, TranscriptFormatter
-from ..settings import LlmSettings
+from voicescribe.adapters._optional import import_optional
+from voicescribe.config.settings import LlmSettings
+from voicescribe.core.domain import Transcript
+from voicescribe.core.formatting import TextChunker, TranscriptFormatter
 
 _PACKAGE = "openai"
 _EXTRA = "llm"

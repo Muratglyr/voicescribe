@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from voicescribe.domain import Transcript, Utterance
-from voicescribe.formatting import TextChunker, TranscriptFormatter
+from voicescribe.core.domain import Transcript, Utterance
+from voicescribe.core.formatting import TextChunker, TranscriptFormatter
 
 SENTENCE_END = r"(?<=[.!?])\s+"
 

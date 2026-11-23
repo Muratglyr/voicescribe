@@ -4,8 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from voicescribe.errors import ConfigurationError
-from voicescribe.settings import SettingsLoader
+from voicescribe.config.settings import SettingsLoader
+from voicescribe.core.errors import ConfigurationError
 
 
 @pytest.fixture(autouse=True)

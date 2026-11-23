@@ -5,8 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 from string import Template
 
-from .errors import ConfigurationError
-from .resources import PROMPTS_DIR, RESOURCE_ENCODING, resource
+from voicescribe.core.errors import ConfigurationError
+from voicescribe.resources import PROMPTS_DIR, RESOURCE_ENCODING, resource
 
 
 class PromptLibrary:

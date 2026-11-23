@@ -8,13 +8,14 @@ from typing import Any
 import pytest
 
 from tests.fakes import FakeChatClient, FakeResponse
-from voicescribe.domain import Transcript, Utterance
-from voicescribe.editors import LlmTranscriptEditor, SpeakerConsistencyInspector
-from voicescribe.errors import ConfigurationError
-from voicescribe.formatting import TextChunker, TranscriptFormatter
-from voicescribe.settings import Settings
-from voicescribe.transcribers import DeepgramTranscriber, WhisperTranscriber
-from voicescribe.writers import JsonWriter, SrtWriter, TextWriter
+from voicescribe.adapters.editors import LlmTranscriptEditor
+from voicescribe.adapters.transcribers import DeepgramTranscriber, WhisperTranscriber
+from voicescribe.adapters.writers import JsonWriter, SrtWriter, TextWriter
+from voicescribe.config.settings import Settings
+from voicescribe.core.consistency import SpeakerConsistencyInspector
+from voicescribe.core.domain import Transcript, Utterance
+from voicescribe.core.errors import ConfigurationError
+from voicescribe.core.formatting import TextChunker, TranscriptFormatter
 
 DEEPGRAM_PAYLOAD = {
     "results": {

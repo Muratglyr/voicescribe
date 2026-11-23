@@ -6,16 +6,16 @@ from pathlib import Path
 import pytest
 
 from tests.fakes import FakeTranscriber, UppercaseEditor
-from voicescribe.audio import AudioSource
-from voicescribe.domain import Transcript, Utterance
-from voicescribe.errors import ConfigurationError, InputError
-from voicescribe.factory import PipelineFactory
-from voicescribe.formatting import TranscriptFormatter
-from voicescribe.messages import Messages
-from voicescribe.pipeline import TranscriptionPipeline
-from voicescribe.settings import Settings, SettingsLoader
-from voicescribe.transcribers import DeepgramTranscriber, WhisperTranscriber
-from voicescribe.writers import SrtWriter, TextWriter
+from voicescribe.adapters.audio import AudioSource
+from voicescribe.adapters.transcribers import DeepgramTranscriber, WhisperTranscriber
+from voicescribe.adapters.writers import SrtWriter, TextWriter
+from voicescribe.application.factory import PipelineFactory
+from voicescribe.application.pipeline import TranscriptionPipeline
+from voicescribe.config.messages import Messages
+from voicescribe.config.settings import Settings, SettingsLoader
+from voicescribe.core.domain import Transcript, Utterance
+from voicescribe.core.errors import ConfigurationError, InputError
+from voicescribe.core.formatting import TranscriptFormatter
 
 
 def _audio(folder: Path, *names: str) -> list[Path]:

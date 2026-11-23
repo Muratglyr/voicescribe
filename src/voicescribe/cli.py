@@ -10,11 +10,11 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from . import __version__
-from .errors import VoicescribeError
-from .factory import PipelineFactory
-from .messages import FALLBACK_LOCALE, Messages
-from .settings import Settings, SettingsLoader
+from voicescribe import __version__
+from voicescribe.application.factory import PipelineFactory
+from voicescribe.config.messages import FALLBACK_LOCALE, Messages
+from voicescribe.config.settings import Settings, SettingsLoader
+from voicescribe.core.errors import VoicescribeError
 
 PROG = "voicescribe"
 _DEBUG_LEVEL = "DEBUG"

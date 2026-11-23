@@ -6,10 +6,9 @@ wording stays in the message catalogues (``resources/messages``) and can be loca
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from collections.abc import Callable
 
-if TYPE_CHECKING:
-    from .messages import Messages
+Translate = Callable[..., str]
 
 
 class VoicescribeError(Exception):
@@ -20,8 +19,9 @@ class VoicescribeError(Exception):
         self.message_key = message_key
         self.params = params
 
-    def render(self, messages: Messages) -> str:
-        return messages(self.message_key, **self.params)
+    def render(self, translate: Translate) -> str:
+        """Render with any ``translate(key, **params)`` callable, e.g. :class:`Messages`."""
+        return translate(self.message_key, **self.params)
 
 
 class ConfigurationError(VoicescribeError):

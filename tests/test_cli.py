@@ -6,14 +6,14 @@ import pytest
 
 from tests.fakes import FakeTranscriber
 from voicescribe import cli
-from voicescribe.audio import AudioSource
-from voicescribe.domain import Transcript
-from voicescribe.errors import InputError
-from voicescribe.formatting import TranscriptFormatter
-from voicescribe.messages import Messages
-from voicescribe.pipeline import TranscriptionPipeline
-from voicescribe.settings import Settings
-from voicescribe.writers import TextWriter
+from voicescribe.adapters.audio import AudioSource
+from voicescribe.adapters.writers import TextWriter
+from voicescribe.application.pipeline import TranscriptionPipeline
+from voicescribe.config.messages import Messages
+from voicescribe.config.settings import Settings
+from voicescribe.core.domain import Transcript
+from voicescribe.core.errors import InputError
+from voicescribe.core.formatting import TranscriptFormatter
 
 
 def _overrides(settings: Settings, *argv: str) -> dict[str, object]:

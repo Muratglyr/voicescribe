@@ -16,8 +16,10 @@ from dataclasses import dataclass, fields, is_dataclass
 from pathlib import Path
 from typing import Any, TypeVar
 
-from .errors import ConfigurationError
-from .resources import DEFAULTS_FILE, read_resource
+from voicescribe.core.consistency import ConsistencySettings
+from voicescribe.core.errors import ConfigurationError
+from voicescribe.core.formatting import FormatSettings
+from voicescribe.resources import DEFAULTS_FILE, read_resource
 
 T = TypeVar("T")
 _TRUE_STRINGS = frozenset({"1", "true", "yes", "on"})
@@ -85,26 +87,6 @@ class LlmSettings:
 class EditingSettings:
     enabled: bool
     llm: LlmSettings
-
-
-@dataclass(frozen=True)
-class ConsistencySettings:
-    enabled: bool
-    min_content_length: int
-    min_match_ratio: float
-    compare_chars: int
-    snippet_chars: int
-
-
-@dataclass(frozen=True)
-class FormatSettings:
-    speaker_label: str
-    unknown_speaker_label: str
-    speaker_separator: str
-    turn_separator: str
-    segment_separator: str
-    sentence_end_pattern: str
-    turn_pattern: str
 
 
 @dataclass(frozen=True)

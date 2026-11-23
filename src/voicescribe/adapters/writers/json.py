@@ -1,19 +1,20 @@
-"""Plain text output: ``LABEL: text`` turns, or running text without speakers."""
+"""Structured JSON output with speakers and timestamps, for further processing."""
 
 from __future__ import annotations
 
+import json
+from dataclasses import asdict
 from pathlib import Path
 
-from ..domain import Transcript
-from ..formatting import TranscriptFormatter
+from voicescribe.core.domain import Transcript
 
-FORMAT_NAME = "txt"
+FORMAT_NAME = "json"
 
 
-class TextWriter:
-    def __init__(self, formatter: TranscriptFormatter, encoding: str) -> None:
-        self._formatter = formatter
+class JsonWriter:
+    def __init__(self, encoding: str, indent: int) -> None:
         self._encoding = encoding
+        self._indent = indent
 
     @property
     def format_name(self) -> str:
@@ -24,5 +25,6 @@ class TextWriter:
 
     def write(self, transcript: Transcript, target_without_suffix: Path) -> Path:
         path = target_without_suffix.with_name(f"{target_without_suffix.name}.{FORMAT_NAME}")
-        path.write_text(self._formatter.render(transcript), encoding=self._encoding)
+        document = json.dumps(asdict(transcript), ensure_ascii=False, indent=self._indent)
+        path.write_text(document, encoding=self._encoding)
         return path

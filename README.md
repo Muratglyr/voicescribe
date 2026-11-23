@@ -83,28 +83,40 @@ language by adding a file and setting `app.locale`.
 
 ## Architecture
 
+The package follows a ports-and-adapters (hexagonal) layout. Dependencies only point
+inwards, and `tests/test_architecture.py` enforces this.
+
 ```
 src/voicescribe/
-├── domain.py        Transcript / Utterance: immutable, engine-independent model
-├── ports.py         Protocols: Transcriber, TranscriptEditor, TranscriptWriter, TranscriptInspector
-├── pipeline.py      Orchestration; depends only on the protocols
-├── factory.py       Composition root: Settings -> wired pipeline (engine/format registries)
-├── settings.py      Typed, frozen settings from layered TOML + env + CLI
-├── transcribers/    whisper.py, deepgram.py
-├── editors/         llm.py (chunked LLM editing), consistency.py (speaker mix-up detection)
-├── writers/         text.py, json.py, srt.py
-├── formatting.py    Transcript <-> "LABEL: text" rendering, parsing and chunking
-├── audio.py         Input discovery, ffmpeg check
-├── prompts.py       Prompt templates from files
-├── messages.py      Localised user-facing text
-├── cli.py           Thin CLI: flags -> config overrides
-└── resources/       defaults.toml, prompts/, messages/
+├── cli.py, __main__.py   Entry points: flags -> config overrides
+├── core/                 Pure domain, standard library only
+│   ├── domain.py           Transcript / Utterance (immutable, engine-independent)
+│   ├── ports.py            Protocols: Transcriber, TranscriptEditor, TranscriptWriter, TranscriptInspector
+│   ├── formatting.py       "LABEL: text" rendering, parsing and chunking
+│   ├── consistency.py      Speaker mix-up detection
+│   └── errors.py           Exceptions carrying message keys
+├── config/               Typed settings from layered TOML + env + CLI, messages, prompts
+├── application/
+│   ├── pipeline.py         Orchestration; depends only on the ports
+│   └── factory.py          Composition root with engine and output-format registries
+├── adapters/             Implementations of the ports
+│   ├── transcribers/       whisper.py, deepgram.py
+│   ├── editors/            llm.py (chunked LLM copy-editing)
+│   ├── writers/            text.py, json.py, srt.py
+│   └── audio.py            Input discovery, ffmpeg check
+└── resources/            defaults.toml, prompts/, messages/
 ```
 
-To add a new speech engine or output format, implement the matching protocol in
-`ports.py` and register it in `factory.py`. The pipeline does not change. Heavy
-dependencies (`whisper`, `requests`, `openai`) are imported lazily, and a missing
-extra produces an install hint instead of a traceback.
+```
+cli ──> application ──> adapters ──> core
+             │              │          ^
+             └──> config ───┴──────────┘
+```
+
+To add a new speech engine or output format, implement the matching protocol from
+`core/ports.py` under `adapters/` and register it in `application/factory.py`. The
+pipeline does not change. Heavy dependencies (`whisper`, `requests`, `openai`) are
+imported lazily, and a missing extra produces an install hint instead of a traceback.
 
 You can also use it as a library:
 

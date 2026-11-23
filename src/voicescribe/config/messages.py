@@ -5,7 +5,7 @@ from __future__ import annotations
 import tomllib
 from collections.abc import Mapping
 
-from .resources import MESSAGES_DIR, RESOURCE_ENCODING, resource
+from voicescribe.resources import MESSAGES_DIR, RESOURCE_ENCODING, resource
 
 FALLBACK_LOCALE = "en"
 CATALOGUE_SUFFIX = ".toml"

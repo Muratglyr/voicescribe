@@ -12,11 +12,11 @@ Library use::
 
 __version__ = "0.2.0"
 
-from .domain import Transcript, Utterance
-from .factory import PipelineFactory
-from .messages import Messages
-from .pipeline import TranscriptionPipeline
-from .settings import Settings, SettingsLoader
+from voicescribe.application.factory import PipelineFactory
+from voicescribe.application.pipeline import TranscriptionPipeline
+from voicescribe.config.messages import Messages
+from voicescribe.config.settings import Settings, SettingsLoader
+from voicescribe.core.domain import Transcript, Utterance
 
 __all__ = [
     "Messages",

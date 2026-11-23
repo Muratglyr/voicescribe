@@ -5,7 +5,7 @@ from __future__ import annotations
 import importlib
 from types import ModuleType
 
-from .errors import DependencyError
+from voicescribe.core.errors import DependencyError
 
 
 def import_optional(module: str, *, extra: str, feature: str) -> ModuleType:

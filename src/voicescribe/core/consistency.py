@@ -10,11 +10,20 @@ it are reported.
 from __future__ import annotations
 
 from collections import Counter
+from dataclasses import dataclass
 from difflib import SequenceMatcher
 
-from ..domain import Transcript, Utterance
-from ..ports import SpeakerMixup
-from ..settings import ConsistencySettings
+from voicescribe.core.domain import Transcript, Utterance
+from voicescribe.core.ports import SpeakerMixup
+
+
+@dataclass(frozen=True)
+class ConsistencySettings:
+    enabled: bool
+    min_content_length: int
+    min_match_ratio: float
+    compare_chars: int
+    snippet_chars: int
 
 
 class SpeakerConsistencyInspector:

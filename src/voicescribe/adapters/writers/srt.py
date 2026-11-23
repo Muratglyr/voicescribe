@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from ..domain import Transcript, Utterance
-from ..formatting import TranscriptFormatter
+from voicescribe.core.domain import Transcript, Utterance
+from voicescribe.core.formatting import TranscriptFormatter
 
 FORMAT_NAME = "srt"
 # Fixed by the SubRip specification.

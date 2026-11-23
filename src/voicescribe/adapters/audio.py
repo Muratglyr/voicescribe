@@ -6,8 +6,8 @@ import shutil
 from collections.abc import Callable
 from pathlib import Path
 
-from .errors import InputError
-from .settings import AudioSettings
+from voicescribe.config.settings import AudioSettings
+from voicescribe.core.errors import InputError
 
 _LIST_JOINER = ", "
 
