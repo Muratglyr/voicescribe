@@ -4,9 +4,16 @@ from pathlib import Path
 
 import pytest
 
+from tests.fakes import FakeTranscriber
 from voicescribe import cli
+from voicescribe.audio import AudioSource
+from voicescribe.domain import Transcript
+from voicescribe.errors import InputError
+from voicescribe.formatting import TranscriptFormatter
 from voicescribe.messages import Messages
+from voicescribe.pipeline import TranscriptionPipeline
 from voicescribe.settings import Settings
+from voicescribe.writers import TextWriter
 
 
 def _overrides(settings: Settings, *argv: str) -> dict[str, object]:
@@ -39,3 +46,22 @@ def test_main_reports_errors_and_returns_non_zero(
 
     assert cli.main([str(tmp_path / "missing.wav"), "--diarize"]) == 1
     assert "Path not found" in caplog.text
+
+
+def test_input_is_validated_before_system_checks(
+    settings: Settings, formatter: TranscriptFormatter, messages: Messages, tmp_path: Path
+) -> None:
+    def ffmpeg_missing() -> None:
+        raise AssertionError("preflight must not run before the input is validated")
+
+    pipeline = TranscriptionPipeline(
+        source=AudioSource(settings.audio),
+        transcriber=FakeTranscriber(Transcript.of([])),
+        writers=[TextWriter(formatter, "utf-8")],
+        output=settings.output,
+        messages=messages,
+        preflight=[ffmpeg_missing],
+    )
+
+    with pytest.raises(InputError):
+        pipeline.run(tmp_path / "missing.wav")

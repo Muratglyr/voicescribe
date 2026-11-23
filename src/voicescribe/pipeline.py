@@ -51,9 +51,9 @@ class TranscriptionPipeline:
 
     def run(self, input_path: Path, folder_mode: bool = False) -> list[Path]:
         """Process one file or a folder and return the paths of every file written."""
+        audio_files = self._source.discover(input_path, folder_mode)  # user errors first
         for check in self._preflight:
             check()
-        audio_files = self._source.discover(input_path, folder_mode)
         self._output.directory.mkdir(parents=True, exist_ok=True)
 
         written: list[Path] = []
