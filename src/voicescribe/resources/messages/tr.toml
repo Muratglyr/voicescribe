@@ -1,0 +1,47 @@
+# Kullaniciya gosterilen metinler (Turkce). Yer tutucular str.format sozdizimini kullanir: {name}.
+
+[cli]
+description = "Ses kayitlarini yerelde Whisper ya da bulutta Deepgram (konusmaci ayrimi) ile metne cevirir, istege bagli olarak bir LLM ile duzenler ve metin, JSON ya da SRT olarak disa aktarir."
+input = "Ses dosyasi ya da --folder ile bir klasor"
+config = "Varsayilanlari gecersiz kilan TOML yapilandirma dosyasi"
+folder = "Girdiyi klasor olarak isle; icindeki tum desteklenen ses dosyalari islenir"
+model = "Whisper model boyutu (varsayilan: {default})"
+language = "Kaydin dili (varsayilan: {default})"
+output = "Ciktilarin yazilacagi klasor (varsayilan: {default})"
+format = "Cikti formati; birden fazlasi icin tekrarlayin (varsayilan: {default})"
+edit = "Transkripti OpenAI uyumlu bir API uzerinden LLM ile duzenle (anahtar: ${env})"
+llm_model = "--edit icin LLM model kimligi (varsayilan: config'teki editing.llm.model)"
+diarize = "Konusmacilari Deepgram ile ayir; transkripsiyon bulutta yapilir (anahtar: ${env})"
+verbose = "Hata ayiklama ciktisini goster"
+version = "Surumu goster ve cik"
+
+[run]
+processing = "[{index}/{total}] {name}"
+transcribing = "  {engine} ile metne cevriliyor..."
+editing = "  {model} ile duzenleniyor..."
+saved = "  Kaydedildi: {path}"
+done = "Tamamlandi. {count} dosya yazildi."
+progress = "Ses dosyalari"
+
+[warning]
+missing_secret = "{env} tanimli degil. {step} adimi atlaniyor."
+missing_llm_model = "LLM modeli tanimli degil (editing.llm.model ya da --llm-model). Duzenleme atlaniyor."
+speaker_mixup = "Olasi konusmaci karismasi: \"{snippet}...\" ham transkriptte '{raw}', duzenlenmiste '{edited}' (beklenen '{expected}')."
+no_timestamps = "{name} icin {format} atlaniyor: transkriptte zaman damgasi yok."
+
+[error]
+unexpected = "Beklenmeyen hata: {error}"
+prefix = "HATA: {message}"
+path_not_found = "Yol bulunamadi: {path}"
+not_a_folder = "--folder verildi ama '{path}' bir klasor degil."
+not_a_file = "'{path}' bir dosya degil. Klasor icin --folder kullanin."
+no_audio_in_folder = "'{path}' klasorunde desteklenen ses dosyasi yok. Desteklenenler: {extensions}"
+unsupported_format = "Desteklenmeyen dosya formati '{suffix}'. Desteklenenler: {extensions}"
+ffmpeg_missing = "'{executable}' bulunamadi. Whisper ses okumak icin ffmpeg gerektirir; kurulum icin README'ye bakin."
+invalid_model = "Gecersiz Whisper modeli '{model}'. Gecerli degerler: {valid}"
+unknown_engine = "Bilinmeyen transkripsiyon motoru '{engine}'. Mevcut olanlar: {available}"
+unknown_format = "Bilinmeyen cikti formati '{format}'. Mevcut olanlar: {available}"
+config_not_found = "Yapilandirma dosyasi bulunamadi: {path}"
+unknown_config_keys = "[{section}] icinde bilinmeyen yapilandirma anahtarlari: {keys}"
+prompt_not_found = "Prompt dosyasi bulunamadi: {name}"
+missing_dependency = "{feature} icin '{package}' gerekli. Kurulum: pip install \"voicescribe[{extra}]\""

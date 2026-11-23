@@ -1,0 +1,48 @@
+# User-facing text. Placeholders use str.format syntax: {name}.
+# Add a new language by copying this file to <locale>.toml and setting app.locale.
+
+[cli]
+description = "Transcribe audio locally with Whisper or in the cloud with Deepgram (speaker diarization), optionally copy-edit the transcript with an LLM, and export it as text, JSON or SRT."
+input = "Audio file, or a folder when used with --folder"
+config = "Path to a TOML config file that overrides the defaults"
+folder = "Treat the input as a folder and process every supported audio file in it"
+model = "Whisper model size (default: {default})"
+language = "Language of the recording (default: {default})"
+output = "Folder to write transcripts to (default: {default})"
+format = "Output format; repeat for several (default: {default})"
+edit = "Copy-edit the transcript with an LLM via an OpenAI-compatible API (key from ${env})"
+llm_model = "LLM model id for --edit (default: editing.llm.model in the config)"
+diarize = "Separate speakers with Deepgram; transcription then runs in the cloud (key from ${env})"
+verbose = "Show debug output"
+version = "Show the version and exit"
+
+[run]
+processing = "[{index}/{total}] {name}"
+transcribing = "  Transcribing with {engine}..."
+editing = "  Editing with {model}..."
+saved = "  Saved: {path}"
+done = "Done. {count} file(s) written."
+progress = "Audio files"
+
+[warning]
+missing_secret = "{env} is not set. Skipping {step}."
+missing_llm_model = "No LLM model configured (editing.llm.model or --llm-model). Skipping editing."
+speaker_mixup = "Possible speaker mix-up: \"{snippet}...\" is '{raw}' in the raw transcript but '{edited}' after editing (expected '{expected}')."
+no_timestamps = "Skipping {format} for {name}: the transcript has no timestamps."
+
+[error]
+unexpected = "Unexpected error: {error}"
+prefix = "ERROR: {message}"
+path_not_found = "Path not found: {path}"
+not_a_folder = "--folder was given but '{path}' is not a folder."
+not_a_file = "'{path}' is not a file. Use --folder to process a folder."
+no_audio_in_folder = "No supported audio files in '{path}'. Supported: {extensions}"
+unsupported_format = "Unsupported file format '{suffix}'. Supported: {extensions}"
+ffmpeg_missing = "'{executable}' not found. Whisper needs ffmpeg to read audio; see the README for installation."
+invalid_model = "Invalid Whisper model '{model}'. Valid values: {valid}"
+unknown_engine = "Unknown transcription engine '{engine}'. Available: {available}"
+unknown_format = "Unknown output format '{format}'. Available: {available}"
+config_not_found = "Config file not found: {path}"
+unknown_config_keys = "Unknown config keys in [{section}]: {keys}"
+prompt_not_found = "Prompt file not found: {name}"
+missing_dependency = "'{package}' is required for {feature}. Install it with: pip install \"voicescribe[{extra}]\""

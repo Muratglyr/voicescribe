@@ -1,0 +1,24 @@
+# Copy to ./voicescribe.toml (picked up automatically) or pass with --config.
+# Only the keys you want to change are needed; see src/voicescribe/resources/defaults.toml
+# for every available setting and its default.
+
+[app]
+locale = "en"            # "en" or "tr"
+
+[transcription]
+engine = "whisper"       # or "deepgram" for speaker diarization
+language = "en"
+
+[transcription.whisper]
+model = "small"
+
+[editing]
+enabled = true
+
+[editing.llm]
+model = "anthropic/claude-haiku-4.5"
+# system_prompt = "prompts/my_editor.md"   # use your own prompt file
+
+[output]
+directory = "transcripts"
+formats = ["txt", "json", "srt"]

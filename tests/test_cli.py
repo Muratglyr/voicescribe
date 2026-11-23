@@ -1,34 +1,41 @@
+from __future__ import annotations
+
 from pathlib import Path
 
-from voicescribe.cli import build_config, parse_args
+import pytest
+
+from voicescribe import cli
+from voicescribe.messages import Messages
+from voicescribe.settings import Settings
 
 
-def test_english_flags_are_parsed() -> None:
-    args = parse_args(["rec.m4a", "--folder", "--language", "de", "--output", "out", "--edit", "--diarize"])
-    config = build_config(args)
-
-    assert config.input_path == Path("rec.m4a")
-    assert config.folder_mode is True
-    assert config.language == "de"
-    assert config.output_dir == Path("out")
-    assert config.edit is True
-    assert config.diarize is True
+def _overrides(settings: Settings, *argv: str) -> dict[str, object]:
+    args = cli.build_parser(Messages.load("en"), settings).parse_args(list(argv))
+    return cli.overrides_from(args, settings)
 
 
-def test_legacy_turkish_flags_still_work() -> None:
-    args = parse_args(["rec.m4a", "--klasor", "--dil=tr", "--cikti", "out", "--duzenle", "--konusmaci-ayir"])
-    config = build_config(args)
+def test_flags_map_to_config_keys(settings: Settings) -> None:
+    overrides = _overrides(
+        settings, "a.m4a", "--language", "de", "--format", "srt", "--format", "json", "--edit", "--diarize", "--verbose"
+    )
 
-    assert config.folder_mode is True
-    assert config.language == "tr"
-    assert config.output_dir == Path("out")
-    assert config.edit is True
-    assert config.diarize is True
+    assert overrides == {
+        "transcription.language": "de",
+        "output.formats": ["srt", "json"],
+        "editing.enabled": True,
+        "transcription.engine": settings.transcription.diarization_engine,
+        "app.log_level": "DEBUG",
+    }
 
 
-def test_defaults() -> None:
-    config = build_config(parse_args(["rec.m4a"]))
+def test_unset_flags_do_not_override_config(settings: Settings) -> None:
+    assert _overrides(settings, "a.m4a") == {}
 
-    assert config.output_dir == Path("./transcripts")
-    assert config.edit is False
-    assert config.diarize is False
+
+def test_main_reports_errors_and_returns_non_zero(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    monkeypatch.chdir(tmp_path)
+
+    assert cli.main([str(tmp_path / "missing.wav"), "--diarize"]) == 1
+    assert "Path not found" in caplog.text

@@ -1,0 +1,89 @@
+# voicescribe default configuration.
+#
+# Every tunable value lives here. Nothing is hardcoded in the Python sources.
+# Override any key with, in increasing order of precedence:
+#   1. a user config file   (--config my.toml, or ./voicescribe.toml if present)
+#   2. environment variables named VOICESCRIBE__<SECTION>__<KEY>
+#      e.g. VOICESCRIBE__LLM__MODEL=openai/gpt-4o-mini
+#   3. command-line flags
+# Secrets are never stored in config files: only the *name* of the
+# environment variable that holds them is configured here.
+
+[app]
+locale = "en"                     # language of CLI/log messages: resources/messages/<locale>.toml
+log_level = "INFO"
+log_format = "%(message)s"
+user_config_file = "voicescribe.toml"
+dotenv_file = ".env"
+env_prefix = "VOICESCRIBE"
+env_separator = "__"
+
+[audio]
+supported_extensions = [".m4a", ".mp3", ".wav", ".mp4", ".aac", ".ogg", ".flac"]
+ffmpeg_executable = "ffmpeg"
+
+[transcription]
+engine = "whisper"                # "whisper" (local) | "deepgram" (cloud, with speaker diarization)
+diarization_engine = "deepgram"   # engine selected by the --diarize flag
+fallback_engine = "whisper"       # used when the selected engine has no API key
+language = "en"
+
+[transcription.whisper]
+model = "medium"
+available_models = ["tiny", "base", "small", "medium", "large", "turbo"]
+# Do not feed the previous segment back as context: prevents one hallucinated
+# segment from spreading into endless repetitions.
+condition_on_previous_text = false
+verbose = false
+
+[transcription.deepgram]
+api_url = "https://api.deepgram.com/v1/listen"
+api_key_env = "DEEPGRAM_API_KEY"
+model = "nova-3"
+content_type = "audio/*"
+auth_scheme = "Token"
+timeout_seconds = 1800
+
+[transcription.deepgram.query]
+diarize = "true"
+punctuate = "true"
+smart_format = "true"
+utterances = "true"
+
+[editing]
+enabled = false
+
+[editing.llm]
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENROUTER_API_KEY"
+model = ""                        # e.g. "anthropic/claude-haiku-4.5"; required when editing is enabled
+system_prompt = "transcript_editor.md"   # file name under resources/prompts/ or a path to your own file
+chunk_max_chars = 12000
+temperature = 0.0
+
+[consistency]
+enabled = true
+min_content_length = 20           # ignore turns shorter than this (characters)
+min_match_ratio = 0.5             # similarity needed to pair an edited turn with a raw turn
+compare_chars = 200               # characters compared per turn
+snippet_chars = 70                # characters shown in warnings
+
+[format]
+speaker_label = "SPEAKER_{index:02d}"
+unknown_speaker_label = "UNKNOWN_SPEAKER"
+speaker_separator = ": "
+turn_separator = "\n\n"
+segment_separator = " "
+sentence_end_pattern = '(?<=[.!?])\s+'
+turn_pattern = '^([^:\n]{1,40}):\s*(.*)$'
+
+[output]
+directory = "transcripts"
+formats = ["txt"]                 # any of: "txt", "json", "srt"
+edited_suffix = "_edited"
+encoding = "utf-8"
+json_indent = 2
+
+[progress]
+enabled = true
+unit = "file"

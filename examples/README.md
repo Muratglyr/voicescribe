@@ -11,5 +11,5 @@ does not come from a real recording.
 Command that produces this pair of files:
 
 ```bash
-python transcribe.py "sample_podcast.m4a" --diarize --edit
+voicescribe sample_podcast.m4a --diarize --edit
 ```

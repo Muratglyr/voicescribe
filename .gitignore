@@ -238,3 +238,8 @@ __marimo__/
 
 # Default output folder
 transcripts/
+
+# Local user config
+voicescribe.toml
+# Coverage
+.coverage
