@@ -157,6 +157,10 @@ The default PyTorch install is CPU-only. With an NVIDIA GPU, install the CUDA bu
 from [pytorch.org](https://pytorch.org/get-started/locally/) for a several-fold
 speed-up of local Whisper.
 
+## Further reading
+
+- [Your LLM Is Quietly Changing Who Said What](https://medium.com/@muratglyr33/your-llm-is-quietly-changing-who-said-what-53708eb9dea5): how the speaker-consistency check works, why it is needed, and where it falls short.
+
 ## License
 
 [MIT](LICENSE)

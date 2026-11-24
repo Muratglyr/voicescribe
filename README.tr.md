@@ -58,6 +58,10 @@ kendi prompt'unuzu `editing.llm.system_prompt` ile verebilirsiniz.
 Mimari, kütüphane olarak kullanım ve geliştirme ortamı için
 [İngilizce README](README.md)'ye bakın.
 
+## Yazılar
+
+- [Your LLM Is Quietly Changing Who Said What](https://medium.com/@muratglyr33/your-llm-is-quietly-changing-who-said-what-53708eb9dea5) (İngilizce): konuşmacı tutarlılık kontrolünün nasıl çalıştığı, neden gerektiği ve sınırları.
+
 ## Lisans
 
 [MIT](LICENSE)
